@@ -37,6 +37,15 @@
 
       const data = await res.json();
 
+      if (!res.ok) {
+        if (data.detail && Array.isArray(data.detail)) {
+          alert(data.detail[0].msg);
+        } else {
+          alert(data.detail || data.error || "Registration failed");
+        }
+        return;
+      }
+
       if (res.ok) {
         alert("Signup successful! Please login.");
         window.location.href = "login.html";
