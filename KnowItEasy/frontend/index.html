@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KnowItEasy Pro</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      background: rgba(2, 6, 23, 0.9);
+      padding: 18px 25px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    header h2 {
+      font-size: 28px;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+    }
+
+    .top-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      border: none;
+      outline: none;
+      resize: vertical;
+      border-radius: 16px;
+      padding: 20px;
+      font-size: 16px;
+      font-family: 'Consolas', monospace;
+      background: #0f172a;
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    textarea:focus {
+      border: 1px solid #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    #controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    .run-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+    }
+
+    .pause-btn {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+
+    .continue-btn {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
+    .reset-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    button:hover {
+      transform: translateY(-2px) scale(1.02);
+      opacity: 0.95;
+    }
+
+    #app {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr;
+      gap: 20px;
+      min-height: 65vh;
+    }
+
+    .panel {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 18px;
+      padding: 18px;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel h3 {
+      margin-bottom: 15px;
+      color: #38bdf8;
+      font-size: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }
+
+    .var {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0f172a;
+      font-weight: bold;
+      padding: 12px 14px;
+      margin: 10px 0;
+      border-radius: 12px;
+      transition: all 0.35s ease;
+      box-shadow: 0 6px 14px rgba(56, 189, 248, 0.2);
+    }
+
+    .highlight {
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);
+    }
+
+    .card {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      padding: 18px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      animation: fade 0.4s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-left: 5px solid #38bdf8;
+    }
+
+    .block {
+      border: 2px dashed #64748b;
+      background: rgba(51, 65, 85, 0.25);
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 12px;
+      animation: fade 0.4s ease;
+    }
+
+    .timeline-item {
+      background: rgba(30, 41, 59, 0.95);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border-left: 4px solid #22d3ee;
+      font-size: 14px;
+      animation: fade 0.3s ease;
+    }
+
+    .empty-text {
+      color: #94a3b8;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      #app {
+        grid-template-columns: 1fr;
+      }
+
+      .logout-btn {
+        position: static;
+        margin-top: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h2>KnowItEasy – Advanced Flow Engine</h2>
+    <button class="reset-btn logout-btn" onclick="logoutUser()">Logout</button>
+  </header>
+
+  <div class="top-section">
+    <textarea id="code">
+num = 7
+is_prime = True
+
+for i in range(2, 6):
+    if num % i == 0:
+        is_prime = False
+
+print(is_prime)
+    </textarea>
+
+    <div id="controls">
+      <button class="run-btn" onclick="start()">▶ Run</button>
+      <button class="pause-btn" onclick="pauseExecution()">⏸ Pause</button>
+      <button class="continue-btn" onclick="continueExecution()">⏯ Continue</button>
+      <button class="reset-btn" onclick="reset()">⟲ Reset</button>
+    </div>
+  </div>
+
+  <div id="app">
+    <div id="vars" class="panel">
+      <h3>Variables</h3>
+      <p class="empty-text">Variables will appear here...</p>
+    </div>
+
+    <div id="logic" class="panel">
+      <h3>Execution Logic</h3>
+      <p class="empty-text">Execution explanation will appear here...</p>
+    </div>
+
+    <div id="timeline" class="panel">
+      <h3>Timeline</h3>
+      <p class="empty-text">Execution timeline will appear here...</p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    if (!localStorage.getItem("token")) {
+      alert("Please login first");
+      window.location.href = "login.html";
+    }
+
+    let state = {
+      steps: [],
+      i: 0,
+      playing: false
+    };
+
+    async function start() {
+      const code = document.getElementById("code").value.trim();
+      const token = localStorage.getItem("token");
+
+      if (!code) {
+        alert("Please enter some code");
+        return;
+      }
+
+      resetPanelsOnly();
+
+      try {
+        const res = await fetch(`${API_BASE}/run`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ code })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.detail || data.error || "Execution failed");
+          return;
+        }
+
+        state.steps = data.steps || [];
+        state.i = 0;
+        state.playing = true;
+
+        run();
+      } catch (err) {
+        alert("Backend not connected or server error.");
+        console.error(err);
+      }
+    }
+
+    function pauseExecution() {
+      state.playing = false;
+    }
+
+    function continueExecution() {
+      if (state.i < state.steps.length && !state.playing) {
+        state.playing = true;
+        run();
+      }
+    }
+
+    async function run() {
+      while (state.i < state.steps.length && state.playing) {
+        process(state.steps[state.i]);
+        state.i++;
+        await sleep(700);
+      }
+    }
+
+    function process(step) {
+      addTimeline(step);
+
+      switch (step.type) {
+        case "assign":
+          updateVars(step.data.snapshot, step.data.var);
+          showLogic(`Assigned <b>${step.data.var}</b> = <b>${step.data.value}</b>`);
+          break;
+
+        case "loop_start":
+          showBlock("🔁 Loop Started");
+          break;
+
+        case "loop_iter":
+          updateVars(step.data.snapshot, step.data.var);
+          showLogic(`Loop Iteration → <b>${step.data.var}</b> = <b>${step.data.value}</b>`);
+          break;
+
+        case "loop_end":
+          showBlock("✅ Loop Ended");
+          break;
+
+        case "if_start":
+          showLogic(`Condition Check → <b>${step.data.condition}</b>`);
+          break;
+
+        case "if_true":
+          showBlock("✔ TRUE Branch Executed");
+          break;
+
+        case "if_false":
+          showBlock("✘ FALSE Branch Executed");
+          break;
+
+        case "if_end":
+          showBlock("📍 End IF");
+          break;
+
+        case "print":
+          showLogic(`🖨 Output → <b>${step.data.value}</b>`);
+          break;
+
+        default:
+          showBlock(`Unknown Step: ${step.type}`);
+      }
+    }
+
+    function updateVars(vars, highlight) {
+      const panel = document.getElementById("vars");
+
+      if (panel.querySelector(".empty-text")) {
+        panel.querySelector(".empty-text").remove();
+      }
+
+      for (let k in vars) {
+        let el = document.getElementById("v-" + k);
+
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "v-" + k;
+          el.className = "var";
+          panel.appendChild(el);
+        }
+
+        el.innerHTML = `<b>${k}</b>: ${vars[k]}`;
+
+        if (k === highlight) {
+          el.classList.add("highlight");
+          setTimeout(() => el.classList.remove("highlight"), 500);
+        }
+      }
+    }
+
+    function showLogic(text) {
+      const logic = document.getElementById("logic");
+
+      if (logic.querySelector(".empty-text")) {
+        logic.querySelector(".empty-text").remove();
+      }
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = text;
+      logic.appendChild(card);
+      logic.scrollTop = logic.scrollHeight;
+    }
+
+    function showBlock(text) {
+      const logic = document.getElementById("logic");
+
+      if (logic.querySelector(".empty-text")) {
+        logic.querySelector(".empty-text").remove();
+      }
+
+      const block = document.createElement("div");
+      block.className = "block";
+      block.innerText = text;
+      logic.appendChild(block);
+      logic.scrollTop = logic.scrollHeight;
+    }
+
+    function addTimeline(step) {
+      const t = document.getElementById("timeline");
+
+      if (t.querySelector(".empty-text")) {
+        t.querySelector(".empty-text").remove();
+      }
+
+      const el = document.createElement("div");
+      el.className = "timeline-item";
+      el.innerText = `Step ${state.i + 1}: ${step.type}`;
+      t.appendChild(el);
+      t.scrollTop = t.scrollHeight;
+    }
+
+    function reset() {
+      state.steps = [];
+      state.i = 0;
+      state.playing = false;
+      resetPanelsOnly();
+    }
+
+    function resetPanelsOnly() {
+      document.getElementById("vars").innerHTML =
+        `<h3>Variables</h3><p class="empty-text">Variables will appear here...</p>`;
+
+      document.getElementById("logic").innerHTML =
+        `<h3>Execution Logic</h3><p class="empty-text">Execution explanation will appear here...</p>`;
+
+      document.getElementById("timeline").innerHTML =
+        `<h3>Timeline</h3><p class="empty-text">Execution timeline will appear here...</p>`;
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userName");
+      alert("Logged out successfully");
+      window.location.href = "login.html";
+    }
+
+    function sleep(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+pydantic
+python-dotenv
+passlib[bcrypt]
+bcrypt==4.0.1
+pydantic[email]
+cryptography
+python-jose[cryptography]
+cors
